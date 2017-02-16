@@ -87,7 +87,7 @@ export function addAction(type, hook) {
       return a.index - b.index
     })
   } else {
-    utils.log(type + '类型重复的' + (hook.name || '') + 'action,覆盖旧的')
+    utils.log(type + '类型重复的 ' + (hook.name || '') + '-action,覆盖旧的')
     _hooks[_index] = hook
   }
 

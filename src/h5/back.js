@@ -42,22 +42,26 @@ export function canHistoryBack() {
   return _canHistoryBack !== window.location.href
 }
 
-/**
- * 默认处理-后退
- */
-addBack({
-  name: 'basic',
-  index: 100,
-  handle: function () {
-    if (canHistoryBack() && window.history.length > 1) {
-      window.history.back()
-      return false
-    } else {
-      winClose()
+export function init() {
+  /**
+   * 默认处理-后退
+   */
+  addBack({
+    name: 'basic',
+    index: 100,
+    handle: function () {
+      if (canHistoryBack() && window.history.length > 1) {
+        window.history.back()
+        return false
+      } else {
+        winClose()
+      }
+      return true
     }
-    return true
-  }
-})
+  })
+}
+
+
 
 /**
  * window的关闭页面

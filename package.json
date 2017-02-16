@@ -1,12 +1,14 @@
 {
   "name": "h5p.js",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "build": "node build/build.js",
-    "dev": "webpack --watch example/demo.js example/demo.build.js"
+    "build": "node build/build.js"
   },
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/232003894/H5Plus.git"
@@ -20,5 +22,11 @@
   "dependencies": {
     "accounting": "^0.4.1",
     "pluralize": "^3.1.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015-loose-rollup": "^7.0.0",
+    "rollup": "^0.33.0",
+    "rollup-plugin-babel": "^2.6.1",
+    "webpack": "^1.13.1"
   }
 }

@@ -4,6 +4,7 @@ import * as back from './back'
 import '../h5/ready'
 
 win.onload(() => {
+  back.init()
   document.addEventListener('manualshow', function (e) {
     if (window.plus) {
       var w = window.plus.webview.currentWebview()

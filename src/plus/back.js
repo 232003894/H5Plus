@@ -9,6 +9,7 @@ export var setPreBack = _back.setPreBack
 export var back = _back.back
 export var plusBack = _back.plusBack
 export var menu = _back.menu
+export var init = _back.init
 
 export function __back() {
   back(true)
@@ -71,21 +72,23 @@ function closeWebView(wobj) {
 }
 
 if (os.plus) {
-  /**
-   * 5+ back
-   */
-  addBack({
-    name: 'basic',
-    index: 100,
-    handle: function () {
-      if (!window.plus) {
-        return true
-      } else {
-        plusBack()
-        return false
+  init = () => {
+    /**
+     * 5+ back
+     */
+    addBack({
+      name: 'basic',
+      index: 100,
+      handle: function () {
+        if (!window.plus) {
+          return true
+        } else {
+          plusBack()
+          return false
+        }
       }
-    }
-  })
+    })
+  }
 
   plusBack = () => {
     // console.log('plusBack')
