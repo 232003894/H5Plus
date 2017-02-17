@@ -1,8 +1,6 @@
 # H5Plus
 整合并统一了dom和h5+的基础方法，并进行了一些扩展
 
-库地址：[h5+.js][1]
-
 ```javascript
 // 直接引用
 import * as $api from 'h5p.js'
