@@ -69,7 +69,7 @@ export function init() {
  */
 function winClose() {
   msgConfirm('是否退出应用？', {
-    title: '提示',
+    title: '退出',
     confirmText: '退出应用',
     cancelText: '不了',
     onConfirm: () => {

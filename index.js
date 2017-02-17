@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.2
+ * h5p.js v1.0.3
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
