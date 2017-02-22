@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.6
+ * h5p.js v1.0.8
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1298,7 +1298,7 @@ function winClose() {
     confirmText: '退出应用',
     cancelText: '不了',
     onConfirm: function () {
-      window.close();
+      window.location.href = 'about:blank';
     }
   });
 }
@@ -1704,7 +1704,7 @@ function currentWebview$1() {
  * 是否主页
  */
 function isHomePage$1() {
-  return window.location.pathname === 'window.location.pathname';
+  return window.location.pathname === '/html/index.html';
 }
 
 /**

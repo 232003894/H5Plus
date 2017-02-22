@@ -73,7 +73,7 @@ function winClose() {
     confirmText: '退出应用',
     cancelText: '不了',
     onConfirm: () => {
-      window.close()
+      window.location.href = 'about:blank'
     }
   })
 }

@@ -42,7 +42,7 @@ export function currentWebview() {
  * 是否主页
  */
 export function isHomePage() {
-  return window.location.pathname === 'window.location.pathname'
+  return window.location.pathname === '/html/index.html'
 }
 
 /**
