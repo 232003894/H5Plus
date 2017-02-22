@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.3
+ * h5p.js v1.0.4
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1294,7 +1294,7 @@ function init$1() {
  */
 function winClose() {
   exports.confirm('是否退出应用？', {
-    title: '提示',
+    title: '退出',
     confirmText: '退出应用',
     cancelText: '不了',
     onConfirm: function () {
@@ -1993,7 +1993,7 @@ function noNetwork$1() {
 }
 
 exports.androidKeys = androidKeys$1;
-var noNetwork = noNetwork$1;
+exports.noNetwork = noNetwork$1;
 if (os.plus) {
   /**
    * 监听back和menu按键
@@ -2015,7 +2015,7 @@ if (os.plus) {
    * @export
    * @returns {Boolean} fase:有网络 true:无网络
    */
-  noNetwork = function () {
+  exports.noNetwork = function () {
     if (window.plus) {
       var nt = window.plus.networkinfo.getCurrentType();
       if (nt === window.plus.networkinfo.CONNECTION_NONE) {

@@ -206,7 +206,8 @@ export {
 from './plus/windows.js'
 
 export {
-  androidKeys
+  androidKeys,
+  noNetwork
 }
 from './plus/device.js'
 
