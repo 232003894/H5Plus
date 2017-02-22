@@ -34,7 +34,9 @@ export function goHome() {
 /**
  * 当前窗体
  */
-export var currentWebview = null
+export function currentWebview() {
+  return null
+}
 
 /**
  * 是否主页

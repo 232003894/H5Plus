@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.5
+ * h5p.js v1.0.6
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1696,7 +1696,9 @@ function goHome$1() {
 /**
  * 当前窗体
  */
-var currentWebview$1 = null;
+function currentWebview$1() {
+  return null;
+}
 
 /**
  * 是否主页
