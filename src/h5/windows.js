@@ -39,7 +39,9 @@ export var currentWebview = null
 /**
  * 是否主页
  */
-export var isHomePage = false
+export function isHomePage() {
+  return window.location.pathname === 'window.location.pathname'
+}
 
 /**
  * 显示指定窗口

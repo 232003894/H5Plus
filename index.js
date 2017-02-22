@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.4
+ * h5p.js v1.0.5
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1701,7 +1701,9 @@ var currentWebview$1 = null;
 /**
  * 是否主页
  */
-var isHomePage$1 = false;
+function isHomePage$1() {
+  return window.location.pathname === 'window.location.pathname';
+}
 
 /**
  * 显示指定窗口
