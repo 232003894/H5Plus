@@ -156,25 +156,31 @@ if (os.plus) {
     var webview = null
 
     if (window.plus) {
-      webview = plus.webview.getWebviewById(id)
-      if (webview) {
-        // 显示已存在窗口
-        console.log('显示已存在窗口')
-        loading(loadingTitle, {
-          onShow: () => {
-            setTimeout(() => {
-              loadingClose()
-            }, os.ios ? 1000 : 900)
-          }
-        })
-        setTimeout(() => {
-          showWindow(webview, false, opts.showOpts)
-        }, 500)
-        return webview
+      // 如果是首页就执行 goHome()
+      if (id === 'index') {
+        webview = plus.webview.getLaunchWebview()
+        goHome()
+      } else {
+        webview = plus.webview.getWebviewById(id)
+        if (webview) {
+          // 显示已存在窗口
+          console.log('显示已存在窗口')
+          loading(loadingTitle, {
+            onShow: () => {
+              setTimeout(() => {
+                loadingClose()
+              }, os.ios ? 1000 : 900)
+            }
+          })
+          setTimeout(() => {
+            showWindow(webview, false, opts.showOpts)
+          }, 500)
+          return webview
+        }
+        // 创建新窗口
+        webview = createWindow(url, id, opts.styles, opts.extras)
+        showWindow(webview, true, opts.showOpts)
       }
-      // 创建新窗口
-      webview = createWindow(url, id, opts.styles, opts.extras)
-      showWindow(webview, true, opts.showOpts)
     } else {
       window.location.href = url
     }

@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.8
+ * h5p.js v1.0.13
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1912,25 +1912,31 @@ if (os.plus) {
     var webview = null;
 
     if (window.plus) {
-      webview = plus.webview.getWebviewById(id);
-      if (webview) {
-        // 显示已存在窗口
-        console.log('显示已存在窗口');
-        exports.loading(loadingTitle, {
-          onShow: function () {
-            setTimeout(function () {
-              exports.loadingClose();
-            }, os.ios ? 1000 : 900);
-          }
-        });
-        setTimeout(function () {
-          exports.showWindow(webview, false, opts.showOpts);
-        }, 500);
-        return webview;
+      // 如果是首页就执行 goHome()
+      if (id === 'index') {
+        webview = plus.webview.getLaunchWebview();
+        exports.goHome();
+      } else {
+        webview = plus.webview.getWebviewById(id);
+        if (webview) {
+          // 显示已存在窗口
+          console.log('显示已存在窗口');
+          exports.loading(loadingTitle, {
+            onShow: function () {
+              setTimeout(function () {
+                exports.loadingClose();
+              }, os.ios ? 1000 : 900);
+            }
+          });
+          setTimeout(function () {
+            exports.showWindow(webview, false, opts.showOpts);
+          }, 500);
+          return webview;
+        }
+        // 创建新窗口
+        webview = createWindow(url, id, opts.styles, opts.extras);
+        exports.showWindow(webview, true, opts.showOpts);
       }
-      // 创建新窗口
-      webview = createWindow(url, id, opts.styles, opts.extras);
-      exports.showWindow(webview, true, opts.showOpts);
     } else {
       window.location.href = url;
     }
