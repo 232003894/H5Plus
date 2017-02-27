@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.13
+ * h5p.js v1.0.14
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1591,11 +1591,15 @@ if (os.plus) {
       if (options.onHide) {
         onHide = options.onHide;
       }
+      if (!options.position) {
+        options.position = 'bottom';
+      }
     }
     if (msg) {
       onShow();
       window.plus && window.plus.nativeUI.toast(msg, {
-        duration: time === 2000 ? 'short' : 'long'
+        duration: time === 2000 ? 'short' : 'long',
+        verticalAlign: options.position
       });
       setTimeout(function () {
         onHide();

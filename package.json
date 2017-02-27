@@ -1,6 +1,6 @@
 {
   "name": "h5p.js",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "整合了dom和h5+的基础方法",
   "main": "index.js",
   "scripts": {
