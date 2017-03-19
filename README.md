@@ -16,6 +16,6 @@ import * as _api from 'h5p.js'
 if (!window.$api) {
   window.$api = _api
 }
-//在后面的文档示例中统一用`$api`
+//在后面的文档示例中将统一用`$api`
 ```
 文档：[http://jefferic.oschina.io/yipifaguanjia/#/md/api.md](http://jefferic.oschina.io/yipifaguanjia/#/md/api.md)
