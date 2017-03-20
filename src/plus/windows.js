@@ -7,7 +7,7 @@ import {
   fire,
   fireTree,
   fireAll
-} from '../h5/event.js'
+} from './event.js'
 import {
   os
 } from './os.js'
@@ -25,6 +25,7 @@ from './msg/loading.js'
 import * as win from '../h5/windows.js'
 
 export var currentWebview = win.currentWebview
+export var opener = win.opener
 export var isHomePage = win.isHomePage
 export var open = win.open
 export var goHome = win.goHome
@@ -56,12 +57,20 @@ let _currentWebview = null
 
 if (os.plus) {
   currentWebview = () => {
-    if (window.plus && _currentWebview === null) {
-      _currentWebview = plus.webview.currentWebview()
-    } else {
-      _currentWebview = null
+    if (window.plus) {
+      if (_currentWebview === null) {
+        _currentWebview = plus.webview.currentWebview()
+      }
     }
     return _currentWebview
+  }
+
+  opener = () => {
+    if (currentWebview()) {
+      return currentWebview().opener()
+    } else {
+      return null
+    }
   }
 
   isHomePage = () => {

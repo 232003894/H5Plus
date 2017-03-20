@@ -7,6 +7,11 @@ import {
   os
 } from './os.js'
 import * as utils from './utils'
+
+var qs = require('qs')
+
+export var _wins = []
+
 /**
  * 打开新页面
  * web:直接打开新url
@@ -14,13 +19,35 @@ import * as utils from './utils'
  * @param {any} id 页面id
  * @returns
  */
-export function open(id) {
+export function open(id, opts) {
   if (!id) {
     utils.log('open id不能为空!')
     return
   }
-  window.location.href = pages[id] || id
-  return null
+  var url = pages[id] || id
+  var tmp = url.split('?')
+  var baseSearch = {}
+  if (tmp.length > 1) {
+    baseSearch = qs.parse(tmp[tmp.length - 1])
+  }
+
+  opts = opts || {}
+  opts.extras = opts.extras || {}
+
+  var _qs = qs.stringify(utils.mix(true, baseSearch, opts.extras))
+  if (_qs) {
+    _qs = "?" + _qs
+  }
+  url = tmp[0] + _qs
+  var newWin = window.open(url, '_blank')
+  newWin.id = id
+  utils.mix(true, newWin, baseSearch, opts.extras)
+  if (_wins.every((_w) => {
+      return _w !== newWin
+    })) {
+    _wins.push(newWin)
+  }
+  return newWin
 }
 
 /**
@@ -35,7 +62,14 @@ export function goHome() {
  * 当前窗体
  */
 export function currentWebview() {
-  return null
+  return window
+}
+
+/**
+ * 当前窗口的创建者窗体
+ */
+export function opener() {
+  return window.opener
 }
 
 /**
@@ -72,7 +106,11 @@ export function hideWindow(webview) {
  * @param {any} showLoading
  */
 export function closeWindow(webview) {
-  utils.log(os.name + ' 环境 不支持 ' + 'closeWindow ' + '!')
+  if (utils.isWindow(webview)) {
+    webview.close()
+  } else {
+    utils.log(os.name + ' 环境 closeWindow方法不支持 ' + ' webview参数为id' + '!')
+  }
 }
 
 /**

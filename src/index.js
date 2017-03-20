@@ -194,6 +194,7 @@ from './pages'
 
 export {
   currentWebview,
+  opener,
   isHomePage,
   open,
   goHome,

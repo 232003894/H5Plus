@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.0.14
+ * h5p.js v1.1.6
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -951,6 +951,160 @@ function actionCount(type, name, index) {
   return count;
 }
 
+var pages = {};
+
+function addPage(page) {
+  return mix(true, pages, page);
+}
+
+var qs = require('qs');
+
+var _wins = [];
+
+/**
+ * 打开新页面
+ * web:直接打开新url
+ * @export
+ * @param {any} id 页面id
+ * @returns
+ */
+function open(id, opts) {
+  if (!id) {
+    log('open id不能为空!');
+    return;
+  }
+  var url = pages[id] || id;
+  var tmp = url.split('?');
+  var baseSearch = {};
+  if (tmp.length > 1) {
+    baseSearch = qs.parse(tmp[tmp.length - 1]);
+  }
+
+  opts = opts || {};
+  opts.extras = opts.extras || {};
+
+  var _qs = qs.stringify(mix(true, baseSearch, opts.extras));
+  if (_qs) {
+    _qs = "?" + _qs;
+  }
+  url = tmp[0] + _qs;
+  var newWin = window.open(url, '_blank');
+  newWin.id = id;
+  mix(true, newWin, baseSearch, opts.extras);
+  if (_wins.every(function (_w) {
+    return _w !== newWin;
+  })) {
+    _wins.push(newWin);
+  }
+  return newWin;
+}
+
+/**
+ * 回到首页
+ * @export
+ */
+function goHome() {
+  open('index');
+}
+
+/**
+ * 当前窗体
+ */
+function currentWebview() {
+  return window;
+}
+
+/**
+ * 当前窗口的创建者窗体
+ */
+function opener() {
+  return window.opener;
+}
+
+/**
+ * 是否主页
+ */
+function isHomePage() {
+  return window.location.pathname === '/html/index.html';
+}
+
+/**
+ * 显示指定窗口
+ * @export
+ * @param {any} webview
+ * @param {any} showLoading
+ */
+function showWindow(webview, showLoading) {
+  log(os.name + ' 环境 不支持 ' + 'showWindow ' + '!');
+}
+
+/**
+ * 隐藏指定窗口
+ * @export
+ * @param {any} webview
+ * @param {any} showLoading
+ */
+function hideWindow(webview) {
+  log(os.name + ' 环境 不支持 ' + 'hideWindow ' + '!');
+}
+
+/**
+ * 关闭指定窗口
+ * @export
+ * @param {any} webview
+ * @param {any} showLoading
+ */
+function closeWindow(webview) {
+  if (isWindow(webview)) {
+    webview.close();
+  } else {
+    log(os.name + ' 环境 closeWindow方法不支持 ' + ' webview参数为id' + '!');
+  }
+}
+
+/**
+ * Dom加载完成
+ * @param {function} callback
+ * @param {Boolean} inRefresh 默认是false
+ * @returns
+ */
+function onload(callback) {
+  var readyRE = /complete|loaded|interactive/;
+  if (readyRE.test(document.readyState)) {
+    callback();
+  } else {
+    document.addEventListener('DOMContentLoaded', callback, false);
+  }
+  return this;
+}
+
+/**
+ * 设备的加载完成
+ * web,5+ 有效
+ * web：等同于onload
+ * 5+：‘plusready’后（window.plus存在）：立即执行，否则加入到‘plusready’事件中
+ * @export
+ * @param {Function} callback
+ */
+function mounted(callback) {
+  if (window.plus) {
+    // 解决callback与plusready事件的执行时机问题(典型案例:showWaiting,closeWaiting)
+    setTimeout(function () {
+      callback();
+    }, 16.7);
+  } else {
+    // 修复：手机app中会调用2次的bug，window.plus改为os.plus
+    if (os.plus) {
+      document.addEventListener('plusready', function () {
+        callback();
+      }, false);
+    } else {
+      onload(callback);
+    }
+  }
+  return this;
+}
+
 var receive = function (eventType, eventData) {
   if (eventType) {
     try {
@@ -965,6 +1119,28 @@ var receive = function (eventType, eventData) {
     }));
   }
 };
+
+if (!os.plus) {
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.eventType) {
+      // e.data.tree && 
+      // fire(window, e.data.eventType, e.data.eventData)
+      if (!!e.data.tree) {
+        if (e.source !== window.opener) {
+          return;
+        } else {
+          fireTree$1(window, e.data.eventType, e.data.eventData);
+        }
+      } else {
+        if (e.source !== window.opener) {
+          fireAll$1(e.data.eventType, e.data.eventData, e.source);
+        } else {
+          fireAll$1(e.data.eventType, e.data.eventData);
+        }
+      }
+    }
+  }, false);
+}
 
 /**
  * 单页面事件通知 html和5+ 都可以用
@@ -995,14 +1171,23 @@ function fire$1(winObj, eventType, eventData) {
 }
 
 /**
- * 事件通知  html:本窗体
+ * 事件通知  html:本窗体和所有子窗体
  * @export
  * @param {any} webview
  * @param {any} eventType
  * @param {Object} eventData
  */
 function fireTree$1(winObj, eventType, eventData) {
-  fire$1(winObj, eventType, eventData);
+  fire$1(window, eventType, eventData);
+  _wins.forEach(function (_w) {
+    setTimeout(function () {
+      _w.postMessage({
+        tree: true,
+        eventType: eventType,
+        eventData: eventData
+      }, window.location.origin);
+    }, 1);
+  });
 }
 
 /**
@@ -1011,8 +1196,29 @@ function fireTree$1(winObj, eventType, eventData) {
  * @param {any} eventType
  * @param {Object} eventData
  */
-function fireAll$1(eventType, eventData) {
+function fireAll$1(eventType, eventData, excludeWin) {
   fire$1(window, eventType, eventData);
+
+  _wins.forEach(function (_w) {
+    if (_w !== excludeWin) {
+      setTimeout(function () {
+        _w.postMessage({
+          tree: false,
+          eventType: eventType,
+          eventData: eventData
+        }, window.location.origin);
+      }, 1);
+    }
+  });
+  if (window.opener && window.opener !== excludeWin) {
+    setTimeout(function () {
+      window.opener.postMessage({
+        tree: false,
+        eventType: eventType,
+        eventData: eventData
+      }, window.location.origin);
+    }, 1);
+  }
 }
 
 var fire = fire$1;
@@ -1667,134 +1873,18 @@ if (os.plus) {
   };
 }
 
-var pages = {};
-
-function addPage(page) {
-  return mix(true, pages, page);
-}
-
-/**
- * 打开新页面
- * web:直接打开新url
- * @export
- * @param {any} id 页面id
- * @returns
- */
-function open$1(id) {
-  if (!id) {
-    log('open id不能为空!');
-    return;
-  }
-  window.location.href = pages[id] || id;
-  return null;
-}
-
-/**
- * 回到首页
- * @export
- */
-function goHome$1() {
-  open$1('index');
-}
-
-/**
- * 当前窗体
- */
-function currentWebview$1() {
-  return null;
-}
-
-/**
- * 是否主页
- */
-function isHomePage$1() {
-  return window.location.pathname === '/html/index.html';
-}
-
-/**
- * 显示指定窗口
- * @export
- * @param {any} webview
- * @param {any} showLoading
- */
-function showWindow$1(webview, showLoading) {
-  log(os.name + ' 环境 不支持 ' + 'showWindow ' + '!');
-}
-
-/**
- * 隐藏指定窗口
- * @export
- * @param {any} webview
- * @param {any} showLoading
- */
-function hideWindow$1(webview) {
-  log(os.name + ' 环境 不支持 ' + 'hideWindow ' + '!');
-}
-
-/**
- * 关闭指定窗口
- * @export
- * @param {any} webview
- * @param {any} showLoading
- */
-function closeWindow$1(webview) {
-  log(os.name + ' 环境 不支持 ' + 'closeWindow ' + '!');
-}
-
-/**
- * Dom加载完成
- * @param {function} callback
- * @param {Boolean} inRefresh 默认是false
- * @returns
- */
-function onload$1(callback) {
-  var readyRE = /complete|loaded|interactive/;
-  if (readyRE.test(document.readyState)) {
-    callback();
-  } else {
-    document.addEventListener('DOMContentLoaded', callback, false);
-  }
-  return this;
-}
-
-/**
- * 设备的加载完成
- * web,5+ 有效
- * web：等同于onload
- * 5+：‘plusready’后（window.plus存在）：立即执行，否则加入到‘plusready’事件中
- * @export
- * @param {Function} callback
- */
-function mounted$1(callback) {
-  if (window.plus) {
-    // 解决callback与plusready事件的执行时机问题(典型案例:showWaiting,closeWaiting)
-    setTimeout(function () {
-      callback();
-    }, 16.7);
-  } else {
-    // 修复：手机app中会调用2次的bug，window.plus改为os.plus
-    if (os.plus) {
-      document.addEventListener('plusready', function () {
-        callback();
-      }, false);
-    } else {
-      onload$1(callback);
-    }
-  }
-  return this;
-}
-
 var _this = undefined;
 
-exports.currentWebview = currentWebview$1;
-exports.isHomePage = isHomePage$1;
-exports.open = open$1;
-exports.goHome = goHome$1;
-var onload = onload$1;
-var mounted = mounted$1;
-exports.showWindow = showWindow$1;
-exports.hideWindow = hideWindow$1;
-exports.closeWindow = closeWindow$1;
+exports.currentWebview = currentWebview;
+exports.opener = opener;
+exports.isHomePage = isHomePage;
+exports.open = open;
+exports.goHome = goHome;
+var onload$1 = onload;
+var mounted$1 = mounted;
+exports.showWindow = showWindow;
+exports.hideWindow = hideWindow;
+exports.closeWindow = closeWindow;
 
 var loadingTitle = '载入中';
 // 默认打开窗口样式配置
@@ -1816,19 +1906,27 @@ var _currentWebview = null;
 
 if (os.plus) {
   exports.currentWebview = function () {
-    if (window.plus && _currentWebview === null) {
-      _currentWebview = plus.webview.currentWebview();
-    } else {
-      _currentWebview = null;
+    if (window.plus) {
+      if (_currentWebview === null) {
+        _currentWebview = plus.webview.currentWebview();
+      }
     }
     return _currentWebview;
+  };
+
+  exports.opener = function () {
+    if (exports.currentWebview()) {
+      return exports.currentWebview().opener();
+    } else {
+      return null;
+    }
   };
 
   exports.isHomePage = function () {
     if (window.plus) {
       return exports.currentWebview().id === window.plus.runtime.appid;
     } else {
-      return isHomePage$1;
+      return isHomePage;
     }
   };
   /**
@@ -1854,7 +1952,7 @@ if (os.plus) {
         }
         showOpts = mix(true, defaultShow, showOpts);
         // console.log(showOpts)
-        fireTree$1(webview, 'manualshow', showOpts);
+        exports.fireTree(webview, 'manualshow', showOpts);
       } else {
         log('窗体不存在!');
         return;
@@ -1965,7 +2063,7 @@ if (os.plus) {
         }, 100);
       }, 300);
     } else {
-      open$1('index');
+      open('index');
     }
   };
 }
@@ -2040,7 +2138,7 @@ if (os.plus) {
   };
 }
 
-onload(function () {
+onload$1(function () {
   init();
   document.addEventListener('manualshow', function (e) {
     if (window.plus) {
@@ -2109,5 +2207,5 @@ exports.confirmClose = confirmClose;
 exports.toastClose = toastClose;
 exports.pages = pages;
 exports.addPage = addPage;
-exports.onload = onload;
-exports.mounted = mounted;
+exports.onload = onload$1;
+exports.mounted = mounted$1;
