@@ -27,13 +27,9 @@ if (!os.plus) {
       // e.data.tree && 
       // fire(window, e.data.eventType, e.data.eventData)
       if (!!e.data.tree) {
-        if (e.source !== window.opener) {
-          return
-        } else {
-          fireTree(window, e.data.eventType, e.data.eventData)
-        }
+        fire(window, e.data.eventType, e.data.eventData)
       } else {
-        if (e.source !== window.opener) {
+        if (e.source === window.opener) {
           fireAll(e.data.eventType, e.data.eventData, e.source)
         } else {
           fireAll(e.data.eventType, e.data.eventData)
