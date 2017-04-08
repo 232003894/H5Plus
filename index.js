@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.1.6
+ * h5p.js v1.1.7
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1126,13 +1126,9 @@ if (!os.plus) {
       // e.data.tree && 
       // fire(window, e.data.eventType, e.data.eventData)
       if (!!e.data.tree) {
-        if (e.source !== window.opener) {
-          return;
-        } else {
-          fireTree$1(window, e.data.eventType, e.data.eventData);
-        }
+        fire$1(window, e.data.eventType, e.data.eventData);
       } else {
-        if (e.source !== window.opener) {
+        if (e.source === window.opener) {
           fireAll$1(e.data.eventType, e.data.eventData, e.source);
         } else {
           fireAll$1(e.data.eventType, e.data.eventData);
