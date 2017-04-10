@@ -92,6 +92,7 @@ if (os.plus) {
         webview = plus.webview.getWebviewById(webview)
       }
       if (webview) {
+        // utils.log('窗体存在!')
         if (showLoading !== false) {
           loading(loadingTitle, {
             onShow: () => {
@@ -103,7 +104,11 @@ if (os.plus) {
         }
         showOpts = utils.mix(true, defaultShow, showOpts)
         // console.log(showOpts)
-        fireTree(webview, 'manualshow', showOpts)
+        // ios系统不延时此处的fire不生效，50-100
+        setTimeout(() => {
+          fireTree(webview, 'manualshow', showOpts)
+        }, os.ios ? 50 : 1)
+
       } else {
         utils.log('窗体不存在!')
         return

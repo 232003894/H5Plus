@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.1.7
+ * h5p.js v1.1.8
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1937,6 +1937,7 @@ if (os.plus) {
         webview = plus.webview.getWebviewById(webview);
       }
       if (webview) {
+        // utils.log('窗体存在!')
         if (showLoading !== false) {
           exports.loading(loadingTitle, {
             onShow: function () {
@@ -1948,7 +1949,10 @@ if (os.plus) {
         }
         showOpts = mix(true, defaultShow, showOpts);
         // console.log(showOpts)
-        exports.fireTree(webview, 'manualshow', showOpts);
+        // ios系统不延时此处的fire不生效，50-100
+        setTimeout(function () {
+          exports.fireTree(webview, 'manualshow', showOpts);
+        }, os.ios ? 50 : 1);
       } else {
         log('窗体不存在!');
         return;
