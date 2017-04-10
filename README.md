@@ -5,7 +5,7 @@
 [![](https://img.shields.io/npm/dt/h5p.js.svg?style=flat-square)](https://www.npmjs.com/package/h5p.js) 
 
 # H5Plus
-整合并统一了dom和h5+的基础方法，并进行了一些扩展
+整合并统一了dom和h5+的基础方法，并进行了一些扩展。
 
 ```javascript
 // 直接引用
