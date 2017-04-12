@@ -104,10 +104,10 @@ if (os.plus) {
         }
         showOpts = utils.mix(true, defaultShow, showOpts)
         // console.log(showOpts)
-        // ios系统不延时此处的fire不生效，50-100
+        // ios系统不延时此处的fire不生效，150
         setTimeout(() => {
           fireTree(webview, 'manualshow', showOpts)
-        }, os.ios ? 50 : 1)
+        }, os.ios ? 150 : 1)
 
       } else {
         utils.log('窗体不存在!')

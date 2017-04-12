@@ -208,7 +208,10 @@ from './plus/windows.js'
 
 export {
   androidKeys,
-  noNetwork
+  noNetwork,
+  pick,
+  captureImage,
+  compressImage
 }
 from './plus/device.js'
 

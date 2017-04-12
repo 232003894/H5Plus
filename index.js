@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.1.8
+ * h5p.js v1.1.9
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1949,10 +1949,10 @@ if (os.plus) {
         }
         showOpts = mix(true, defaultShow, showOpts);
         // console.log(showOpts)
-        // ios系统不延时此处的fire不生效，50-100
+        // ios系统不延时此处的fire不生效，150
         setTimeout(function () {
           exports.fireTree(webview, 'manualshow', showOpts);
-        }, os.ios ? 50 : 1);
+        }, os.ios ? 150 : 1);
       } else {
         log('窗体不存在!');
         return;
@@ -2103,9 +2103,33 @@ function noNetwork$1() {
   log(os.name + ' 环境 不支持 ' + 'noNetwork ' + '!');
   return false;
 }
+/**
+ * 从系统相册选择文件（图片或视频）
+ * @export
+ */
+function pick$1(success, error, options) {
+  log(os.name + ' 环境 不支持 ' + 'pick ' + '!');
+}
+/**
+ * 进行拍照操作
+ * @export
+ */
+function captureImage$1() {
+  log(os.name + ' 环境 不支持 ' + 'captureImage ' + '!');
+}
+/**
+ * 图片压缩转换
+ * @export
+ */
+function compressImage$1() {
+  log(os.name + ' 环境 不支持 ' + 'compressImage ' + '!');
+}
 
 exports.androidKeys = androidKeys$1;
 exports.noNetwork = noNetwork$1;
+exports.pick = pick$1;
+exports.captureImage = captureImage$1;
+exports.compressImage = compressImage$1;
 if (os.plus) {
   /**
    * 监听back和menu按键
@@ -2135,6 +2159,67 @@ if (os.plus) {
       }
     }
     return false;
+  };
+
+  /**
+   * 从系统相册选择文件（图片或视频）
+   * @param {function} success success(files) [array]files
+   * @param {function} error error(err) err.code err.message
+   * @param {object} options http://www.html5plus.org/doc/zh_cn/gallery.html#plus.gallery.GalleryOptions
+   * @export
+   */
+  exports.pick = function (success, error, options) {
+    if (window.plus) {
+      options = options || {};
+      window.plus.gallery.pick(function (e) {
+        var files = [];
+        if (e && e.files) {
+          files = e.files;
+        } else {
+          files.push(e);
+        }
+        success(files);
+      }, function (err) {
+        error(err);
+      }, options);
+    }
+  };
+
+  /**
+   * 进行拍照操作
+   * @param {function} success success(file) 
+   * @param {function} error error(err) err.code err.message
+   * @param {object} options http://www.html5plus.org/doc/zh_cn/camera.html#plus.camera.CameraOption
+   * @export
+   */
+  exports.captureImage = function (success, error, options) {
+    if (window.plus) {
+      options = options || {};
+      var cmr = window.plus.camera.getCamera();
+      cmr.captureImage(function (file) {
+        success(file);
+      }, function (err) {
+        error(err);
+      }, options);
+    }
+  };
+
+  /**
+   * 图片压缩转换
+   * @param {object} options http://www.html5plus.org/doc/zh_cn/zip.html#plus.zip.CompressImageOptions
+   * @param {function} success success(zip)  http://www.html5plus.org/doc/zh_cn/zip.html#plus.zip.CompressImageSuccessCallback
+   * @param {function} error error(err) err.code err.message
+   * @export
+   */
+  exports.compressImage = function (options, success, error) {
+    if (window.plus) {
+      options = options || {};
+      window.plus.zip.compressImage(options, function (zip) {
+        success(zip);
+      }, function (err) {
+        error(err);
+      });
+    }
   };
 }
 
