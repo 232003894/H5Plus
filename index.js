@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.1.9
+ * h5p.js v1.1.11
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -1000,6 +1000,16 @@ function open(id, opts) {
 }
 
 /**
+ * 打开新页面
+ * @export
+ * @param {string} url url
+ * @returns
+ */
+function openUrl(url) {
+  open(url);
+}
+
+/**
  * 回到首页
  * @export
  */
@@ -1869,12 +1879,11 @@ if (os.plus) {
   };
 }
 
-var _this = undefined;
-
 exports.currentWebview = currentWebview;
 exports.opener = opener;
 exports.isHomePage = isHomePage;
 exports.open = open;
+exports.openUrl = openUrl;
 exports.goHome = goHome;
 var onload$1 = onload;
 var mounted$1 = mounted;
@@ -1890,12 +1899,12 @@ var defaultWin = {
 };
 // 默认窗口显示配置
 var defaultShow = {
-  duration: os.ios ? 300 : 200,
+  duration: os.ios ? 300 : 300,
   aniShow: 'slide-in-right'
 };
 // 默认窗口隐藏配置
 var defaultHide = {
-  duration: os.ios ? 300 : 200,
+  duration: os.ios ? 300 : 300,
   aniHide: 'slide-out-right'
 };
 var _currentWebview = null;
@@ -1943,16 +1952,20 @@ if (os.plus) {
             onShow: function () {
               setTimeout(function () {
                 exports.loadingClose();
-              }, os.ios ? 1000 : 900);
+              }, os.ios ? 1100 : 1300);
             }
           });
         }
         showOpts = mix(true, defaultShow, showOpts);
         // console.log(showOpts)
         // ios系统不延时此处的fire不生效，150
-        setTimeout(function () {
+        if (os.ios) {
+          setTimeout(function () {
+            exports.fireTree(webview, 'manualshow', showOpts);
+          }, 150);
+        } else {
           exports.fireTree(webview, 'manualshow', showOpts);
-        }, os.ios ? 150 : 1);
+        }
       } else {
         log('窗体不存在!');
         return;
@@ -2027,7 +2040,7 @@ if (os.plus) {
             onShow: function () {
               setTimeout(function () {
                 exports.loadingClose();
-              }, os.ios ? 1000 : 900);
+              }, os.ios ? 1100 : 1300);
             }
           });
           setTimeout(function () {
@@ -2045,6 +2058,12 @@ if (os.plus) {
     return webview;
   };
 
+  exports.openUrl = function (url) {
+    if (window.plus) {
+      window.plus.runtime.openURL(encodeURI('http://www.zhangxinxu.com/wordpress/2013/04/es5新增数组方法/#foreach'));
+    }
+  };
+
   exports.goHome = function () {
     if (window.plus) {
       exports.loading(loadingTitle);
@@ -2055,7 +2074,7 @@ if (os.plus) {
         if (el.id !== webview.id && top.id !== el.id) {
           el.close('none');
         }
-      }, _this);
+      });
       setTimeout(function () {
         exports.loadingClose();
         setTimeout(function () {

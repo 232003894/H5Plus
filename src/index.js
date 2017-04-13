@@ -197,6 +197,7 @@ export {
   opener,
   isHomePage,
   open,
+  openUrl,
   goHome,
   onload,
   mounted,

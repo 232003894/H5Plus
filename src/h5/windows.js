@@ -51,6 +51,16 @@ export function open(id, opts) {
 }
 
 /**
+ * 打开新页面
+ * @export
+ * @param {string} url url
+ * @returns
+ */
+export function openUrl(url) {
+  open(url)
+}
+
+/**
  * 回到首页
  * @export
  */

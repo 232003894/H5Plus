@@ -28,6 +28,7 @@ export var currentWebview = win.currentWebview
 export var opener = win.opener
 export var isHomePage = win.isHomePage
 export var open = win.open
+export var openUrl = win.openUrl
 export var goHome = win.goHome
 export var onload = win.onload
 export var mounted = win.mounted
@@ -43,12 +44,12 @@ const defaultWin = {
 }
 // 默认窗口显示配置
 const defaultShow = {
-  duration: os.ios ? 300 : 200,
+  duration: os.ios ? 300 : 300,
   aniShow: 'slide-in-right'
 }
 // 默认窗口隐藏配置
 const defaultHide = {
-  duration: os.ios ? 300 : 200,
+  duration: os.ios ? 300 : 300,
   aniHide: 'slide-out-right'
 }
 let _refreshs = []
@@ -98,16 +99,20 @@ if (os.plus) {
             onShow: () => {
               setTimeout(() => {
                 loadingClose()
-              }, os.ios ? 1000 : 900)
+              }, os.ios ? 1100 : 1300)
             }
           })
         }
         showOpts = utils.mix(true, defaultShow, showOpts)
         // console.log(showOpts)
         // ios系统不延时此处的fire不生效，150
-        setTimeout(() => {
+        if (os.ios) {
+          setTimeout(() => {
+            fireTree(webview, 'manualshow', showOpts)
+          }, 150)
+        } else {
           fireTree(webview, 'manualshow', showOpts)
-        }, os.ios ? 150 : 1)
+        }
 
       } else {
         utils.log('窗体不存在!')
@@ -183,7 +188,7 @@ if (os.plus) {
             onShow: () => {
               setTimeout(() => {
                 loadingClose()
-              }, os.ios ? 1000 : 900)
+              }, os.ios ? 1100 : 1300)
             }
           })
           setTimeout(() => {
@@ -201,6 +206,12 @@ if (os.plus) {
     return webview
   }
 
+  openUrl = (url) => {
+    if (window.plus) {
+      window.plus.runtime.openURL(encodeURI('http://www.zhangxinxu.com/wordpress/2013/04/es5新增数组方法/#foreach'))
+    }
+  }
+
   goHome = () => {
     if (window.plus) {
       loading(loadingTitle)
@@ -211,7 +222,7 @@ if (os.plus) {
         if (el.id !== webview.id && top.id !== el.id) {
           el.close('none')
         }
-      }, this)
+      })
       setTimeout(() => {
         loadingClose()
         setTimeout(() => {
