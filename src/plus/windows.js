@@ -208,7 +208,7 @@ if (os.plus) {
 
   openUrl = (url) => {
     if (window.plus) {
-      window.plus.runtime.openURL(encodeURI('http://www.zhangxinxu.com/wordpress/2013/04/es5新增数组方法/#foreach'))
+      window.plus.runtime.openURL(encodeURI(url))
     }
   }
 

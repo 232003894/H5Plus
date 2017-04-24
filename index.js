@@ -1,5 +1,5 @@
 /*!
- * h5p.js v1.1.11
+ * h5p.js v1.1.12
  * https://github.com/232003894/H5Plus
  * Released under the MIT License.
  */
@@ -2060,7 +2060,7 @@ if (os.plus) {
 
   exports.openUrl = function (url) {
     if (window.plus) {
-      window.plus.runtime.openURL(encodeURI('http://www.zhangxinxu.com/wordpress/2013/04/es5新增数组方法/#foreach'));
+      window.plus.runtime.openURL(encodeURI(url));
     }
   };
 
